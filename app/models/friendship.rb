@@ -5,7 +5,6 @@ class Friendship < ApplicationRecord
   validates_with FriendshipValidator
 
   validates :user_id,
-    presence: true,
     uniqueness: { scope: :friend_id }
 
   validates :friend_id,
