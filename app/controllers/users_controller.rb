@@ -1,14 +1,15 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:show, :update, :destroy]
+
   def show
-    user = User.find(params[:id])
-    friendships = user.friendships.where(user_id: user.id)
     friends = []
+    friendships = @user.friendships.where(user_id: @user.id)
     friendships.each do |f|
       friends << f.friend_id
     end
     render json: {
-      id: user.id,
-      name: user.name,
+      id: @user.id,
+      name: @user.name,
       friends: friends
     }
   end
@@ -28,11 +29,10 @@ class UsersController < ApplicationController
   end
 
   def update
-    user = User.find(params[:id])
-    if user.update!(user_params)
+    if @user.update!(user_params)
       render json: {
         message: 'ユーザー名を更新しました',
-        user: user
+        user: @user
       }
     else
       render json: {
@@ -42,16 +42,25 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    user = User.find(params[:id])
-    user.destroy!
-    render json: {
-      message: 'ユーザ登録を削除しました',
-      user: user
-    }
+    if @user.destroy!
+      render json: {
+        message: 'ユーザを削除しました',
+        user: @user
+      }
+    else
+      render json: {
+        message: 'ユーザ削除に失敗しました'
+      }
+    end
   end
 
   private
+
   def user_params
     params.permit(:name)
+  end
+
+  def set_user
+    @user = User.find(params[:id])
   end
 end
