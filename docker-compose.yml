@@ -1,26 +1,19 @@
 version: "3"
 
 services:
-  backend:
-    container_name: backend
-    build: ./backend/
-    image: backend
-    command: bundle exec rails server -b 0.0.0.0
+  app:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     tty: true
     stdin_open: true
     volumes:
-      - ./backend:/app:cached
-      # - bundle_data:/usr/local/bundle:cached
-      - /app/vendor
-      - /app/tmp
-      - /app/log
-      - /app/.git
+      - .:/myapp
+    ports:
+      - "3000:3000"
     environment:
       TZ: Asia/Tokyo
     depends_on:
       - db
-    ports:
-      - 5000:3000
     networks:
       app_net:
         ipv4_address: "172.20.0.3"
