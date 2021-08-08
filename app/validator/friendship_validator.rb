@@ -5,7 +5,7 @@ class FriendshipValidator < ActiveModel::Validator
     end
 
     if User.find_by(id: record.friend_id) == nil && record.friend_id != nil
-      record.errors.add :friend_id, 'Friend must exist '
+      record.errors.add :friend_id, 'Friend must exist'
     end
   end
 end
