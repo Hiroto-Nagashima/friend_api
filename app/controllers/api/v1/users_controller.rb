@@ -18,10 +18,9 @@ module Api
 
       def create
         user = User.new(user_params)
-        if user.save!
+        if user.save
           render json: {
-            message: 'ユーザ登録に成功しました',
-            user: user
+            message: 'ユーザ登録に成功しました'
           }
         else
           render json: {
@@ -31,10 +30,9 @@ module Api
       end
 
       def update
-        if @user.update!(user_params)
+        if @user.update(user_params)
           render json: {
-            message: 'ユーザー名を更新しました',
-            user: @user
+            message: 'ユーザー名を更新しました'
           }
         else
           render json: {
@@ -44,16 +42,10 @@ module Api
       end
 
       def destroy
-        if @user.destroy!
-          render json: {
-            message: 'ユーザを削除しました',
-            user: @user
-          }
-        else
-          render json: {
-            message: 'ユーザ削除に失敗しました'
-          }
-        end
+        @user.destroy
+        render json: {
+          message: 'ユーザを削除しました'
+        }
       end
 
       private

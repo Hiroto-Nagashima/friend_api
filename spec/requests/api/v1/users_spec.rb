@@ -41,34 +41,117 @@ RSpec.describe 'Api::V1::Users', type: :request do
   end
 
   describe 'POST /users/' do
-    it 'ユーザーを作成' do
-      expect{post "/api/v1/users", params: { name: 'Hitoshi' }}.to change(User, :count).by(+1)
-      expect(response).to have_http_status(200)
+    context 'success 有効なパラメータの場合' do
+      it 'リクエストが成功しているか' do
+        post "/api/v1/users", params: { name: 'Hitoshi' }
+        expect(response).to have_http_status(200)
+      end
+
+      it 'ユーザーが登録されるか' do
+        expect{post "/api/v1/users", params: { name: 'Hitoshi' }}.to change(User, :count).by(+1)
+      end
+
+      it '期待するメッセージが返ってくるか' do
+        post "/api/v1/users", params: { name: 'Hitoshi' }
+        json = JSON.parse(response.body)
+        expect(json['message']).to eq('ユーザ登録に成功しました')
+      end
+    end
+
+    context 'error 無効なパラメーターの時' do
+      it 'リクエストが成功しているか' do
+        post "/api/v1/users", params: { name: nil }
+        expect(response).to have_http_status(200)
+      end
+
+      it 'ユーザーが登録されないか' do
+        expect{post "/api/v1/users", params: { name: nil }}.to_not change(User, :count)
+      end
+
+      it '期待するメッセージが返ってくるか' do
+        post "/api/v1/users", params: { name: nil }
+        json = JSON.parse(response.body)
+        expect(json['message']).to eq('ユーザ登録に失敗しました')
+      end
+    end
+  end
+
+  describe 'PUT /users/:id' do
+    before do
+      User.create(name: 'Taro')
+      @user = User.find_by(name: 'Taro')
+    end
+
+    context 'success 有効なパラメータの場合' do
+      before do
+        put "/api/v1/users/#{@user.id}", params: { name: 'Tarou' }
+      end
+
+      it 'リクエストが成功しているか' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'ユーザーの名前が更新されるか' do
+        expect(@user.reload.name).to eq('Tarou')
+      end
+
+      it '期待するメッセージが返ってくるか' do
+        json = JSON.parse(response.body)
+        expect(json['message']).to eq('ユーザー名を更新しました')
+      end
+    end
+
+    context 'error 無効なパラメーターの時' do
+      before do
+        put "/api/v1/users/#{@user.id}", params: { name: nil }
+      end
+
+      it 'リクエストが成功しているか' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'ユーザーが名前が更新されていないか' do
+        expect(@user.name).to eq('Taro')
+      end
+
+      it '期待するメッセージが返ってくるか' do
+        json = JSON.parse(response.body)
+        expect(json['message']).to eq('ユーザー名の更新に失敗しました')
+      end
     end
   end
 
   describe 'DELETE /users/:id' do
-    it 'ユーザーを削除' do
-      # post "/api/v1/users/#{user.id}/register_image", params: { image: params }
-      # expect(user.image).not_to eq(nil)
-      # expect(response).to have_http_status(200)
+    before do
+      User.create(name: 'Taro')
+      @user = User.find_by(name: 'Taro')
+    end
+
+    context 'success 有効なパラメータの場合' do
+      it 'リクエストが成功しているか' do
+        delete "/api/v1/users/#{@user.id}"
+        expect(response).to have_http_status(200)
+      end
+
+      it 'ユーザーの名前が更新されるか' do
+        expect{delete "/api/v1/users/#{@user.id}"}.to change(User, :count).by(-1)
+      end
+
+      it '期待するメッセージが返ってくるか' do
+        delete "/api/v1/users/#{@user.id}"
+        json = JSON.parse(response.body)
+        expect(json['message']).to eq('ユーザを削除しました')
+      end
+    end
+
+    context 'error 無効なパラメーターの時' do
+      it 'ユーザーIDがnilの場合無効' do
+        expect{delete "/api/v1/users/nil"}.to raise_error ActiveRecord::RecordNotFound
+      end
+
+      it 'ユーザーIDが存在しないIDの場合無効' do
+        expect{delete "/api/v1/users/100"}.to raise_error ActiveRecord::RecordNotFound
+      end
     end
   end
-
-
-
-  # describe 'PUT /users/:id' do
-  #   it 'ユーザーの情報を更新' do
-  #     user = create(:user)
-  #     put "/api/v1/users/#{user.id}", params: { params: {
-  #       first_name: user.first_name,
-  #       last_name: '山本',
-  #       email: user.email,
-  #       telephone_number: user.telephone_number
-  #       } }
-  #       json = JSON.parse(response.body)
-  #       expect(json["user"]['lastName']).to eq('山本')
-  #       expect(response).to have_http_status(200)
-  #     end
-  #   end
-  end
+end
