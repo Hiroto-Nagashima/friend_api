@@ -8,7 +8,7 @@
 
 ## Setup
 ```
-$ git clone https://github.com/Hiroto-Nagashima/Kenkou.git
+$ git clone https://github.com/Hiroto-Nagashima/kenkou.git
 $ cd kenkou
 $ docker-compose build
 $ docker-compose run app bundle i
