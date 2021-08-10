@@ -3,6 +3,7 @@
 ## Overview
 - Ruby on Rails(APIモード)を使用して実装しました。テストはRspecで書きました。
 - ER図はdocs/table.drawio.pngです。
+- git flowでブランチを切り、github issuesやprojectsを活用してタスク管理をしました。
 - github: https://github.com/Hiroto-Nagashima/kenkou
 
 ## Setup
