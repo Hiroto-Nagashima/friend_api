@@ -1,24 +1,38 @@
-# README
+# Kenkou
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Overview
+- Ruby on Rails(APIモード)を使用して実装しました。テストはRspecで書きました。
+- ER図はdocs/table.drawio.pngです。
+- github: https://github.com/Hiroto-Nagashima/kenkou
 
-Things you may want to cover:
+## Setup
+```
+$ git clone https://github.com/Hiroto-Nagashima/Kenkou.git
+$ cd kenkou
+$ docker-compose build
+$ docker-compose run app bundle i
+$ docker-compose run app rails db:create
+$ docker-compose run app rails db:migrate
+$ docker-compose run app rails db:seed
+$ docker-compose up
 
-* Ruby version
+```
 
-* System dependencies
+## Usage
+- http://localhost:3000/api/v1/users/1~5 でjsonが返ります。
+  - seedで5人のユーザーを初期値として投入しています。
+- ユーザーの作成、ユーザー名の更新、ユーザーの削除機能も実装しました。
+```
+$ docker-compose up　-d
+$ curl -XPOST -H "Content-Type: application/json" -d '{"name":"hoge"}' http://localhost:3000/api/v1/users  //ユーザ作成
+$ curl -XPUT -H "Content-Type: application/json" -d '{"name":"huga"}' http://localhost:3000/api/v1/users/1  //ユーザ名更新
+$ curl -XDELETE -H "Content-Type: application/json" http://localhost:3000/api/v1/users/1  //ユーザ削除
 
-* Configuration
+```
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## Unit Test
+- モデルとAPIのテストを実装しました。
+- 以下のコマンドで実行できます
+```
+$ docker-compose run app rspec
+```
