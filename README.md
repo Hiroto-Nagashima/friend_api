@@ -1,5 +1,3 @@
-# Kenkou
-
 ## Overview
 - Ruby on Rails(APIモード)を使用して実装しました。テストはRSpecで書きました。
 - ER図はdocs/table.drawio.pngです。
